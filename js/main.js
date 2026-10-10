@@ -42,8 +42,16 @@
 
   /* ---------- parallax ---------- */
   const parallaxEls = $$(".paralax-slow, .paralax-fast");
+  const canParallax = () =>
+    window.matchMedia("(min-width: 992px)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let ticking = false;
   function updateParallax() {
+    ticking = false;
+    if (!canParallax()) {
+      parallaxEls.forEach((el) => { el.style.translate = ""; });
+      return;
+    }
     const vh = window.innerHeight;
     parallaxEls.forEach((el) => {
       const rect = el.getBoundingClientRect();
@@ -54,7 +62,6 @@
       const offset = clamp(-center * speed, -80, 80);
       el.style.translate = "0 " + offset.toFixed(1) + "px";
     });
-    ticking = false;
   }
   function onScrollParallax() {
     if (!ticking) {
